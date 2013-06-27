@@ -78,14 +78,18 @@
       $(this.element).data('oldZIndex', $(this.element).css('zIndex'));
       
       // figure out what options we would need to reverse this animation so we can have a reverse function.
-      if($(this.element).next().length === 0) {
-        
-      } else if($(this.element).prev().length === 0) {
-        this.options.reversal = {
-          mode   : 'prependTo'
+      this.options.reversal = {
+        mode   : 'appendTo'
+        target : $(this.element).parent()
+      };
+      if($(this.element).next().length !== 0) {
+        if($(this.element).prev().length === 0) {
+          this.options.reversal = {
+            mode   : 'prependTo'
+            target : $(this.element
+          }
         }
       }
-
 
       // at this point, we know we have a valid source, target, mode, and all options.
       if(this.options.position == 'relativeToTarget') this.animateRelativeToTarget();
