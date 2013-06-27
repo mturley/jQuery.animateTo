@@ -220,6 +220,15 @@
         element.removeData('oldZIndex');
         if($.isFunction(t.options.callback)) t.options.callback.call(t.element);
       });
+    },
+
+    reversePreviousAnimation: function() {
+      $(this.element).animateTo({
+        target   : this.options.reversal.target,
+        mode     : this.options.reversal.mode,
+        duration : this.options.duration,
+        easing   : this.options.easing
+      });
     }
   };
 
@@ -257,6 +266,15 @@
         console.error("jQuery.animateTo :: Your arguments were: ",arguments);
       }
     });
+  };
+
+  $.fn.animateBack = function() {
+    var plugin = $(this).data("plugin_animateTo");
+    if(!plugin) {
+      if(console && console.error) console.error("jQuery.animateBack :: ERROR: can't reverse that element, animateTo was never called on it.");
+      return this;
+    }
+    plugin.reversePreviousAnimation();
   };
 
 })( jQuery, window, document );
