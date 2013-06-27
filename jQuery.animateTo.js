@@ -13,13 +13,17 @@
  // FOR BEST RESULTS, the original container and the new target container should share the same offset parent.
  //   if they don't, you may get positioning bugs and jumpiness.
 
+ // NOTE: The position option 'absolute' provides an extra level of flashiness: the placeholders will animate too.
+ //  that way, the space the element used to take up shrinks during the animation, while a space for it to land grows to size.
+ //  this gives the illusion of moving all adjacent objects out of the way just in time for the animation to finish.
+
 ;(function ( $, window, document, undefined ) {
   // Create the defaults once
   var defaults = {
     mode        : 'appendTo',         // choices are 'appendTo', 'prependTo', 'insertBefore', 'insertAfter'
     duration    : undefined,          // delegated to jQuery.animate, leaving undefined will use framework defaults.
     easing      : undefined,          // delegated to jQuery.animate, leaving undefined will use framework defaults.
-    position    : 'relativeToSource', // choices are 'relativeToSource', 'relativeToTarget', 'absolute'
+    position    : 'relativeToTarget', // choices are 'relativeToSource', 'relativeToTarget', 'absolute'
     alsoAnimate : undefined,          // css key/value pairs to animate on the element along with moving it.
     callback    : undefined           // an optional function to call after the animation is all done.
   };
@@ -72,6 +76,17 @@
       }
       // save our zIndex for later
       $(this.element).data('oldZIndex', $(this.element).css('zIndex'));
+      
+      // figure out what options we would need to reverse this animation so we can have a reverse function.
+      if($(this.element).next().length === 0) {
+        
+      } else if($(this.element).prev().length === 0) {
+        this.options.reversal = {
+          mode   : 'prependTo'
+        }
+      }
+
+
       // at this point, we know we have a valid source, target, mode, and all options.
       if(this.options.position == 'relativeToTarget') this.animateRelativeToTarget();
       if(this.options.position == 'relativeToSource') this.animateRelativeToSource();
@@ -160,7 +175,24 @@
       // if the user gave us some additional styles to animate, let's include them.
       if(t.options.alsoAnimate != undefined)
         animationStyles = $.extend( {}, t.options.alsoAnimate, animationStyles);
+      // since the element is independent of our placeholders in absolute mode, we can animate the placeholders too.
+      // first we make the target collapse and then grow itself to size over time, moving elements out of the way
+      // to make room for our new placement of 'element'.  This way, nothing jumps when we put the element in place.
+      targetPlaceholder.css({
+        'width'  : '1px',
+        'height' : '1px'
+      }).animate({
+        'width'  : $(sourcePlaceholder).width(),
+        'height' : $(sourcePlaceholder).height()
+      }, t.options.duration, t.options.easing);
+      // simultaneously, we make the source placeholder shrink over time, so the space the element used to take up
+      // is collapsed.  This way, nothing jumps when we remove the source placeholder.
+      sourcePlaceholder.animate({
+        'width'  : '1px',
+        'height' : '1px'
+      }, t.options.duration, t.options.easing);
       // place the element absolutely on top of the source placeholder.
+      element.appendTo("body");
       element.css({
         'position' : 'absolute',
         'top'      : (sourcePlaceholder.offset().top)+'px',
@@ -168,14 +200,14 @@
         'z-index'  : 9999
       }).animate(animationStyles, t.options.duration, t.options.easing, function() {
         // when the animation is over, actually move the element into place.
-        targetPlaceholder.replaceWith(element);
+        targetPlaceholder.stop(true, true).replaceWith(element);
         element.css({
           'position' : 'static',
           'top'      : '',
           'left'     : '',
           'zIndex'   : element.data('oldZIndex')
         });
-        sourcePlaceholder.remove();
+        sourcePlaceholder.stop(true, true).remove();
         element.removeData('oldZIndex');
         if($.isFunction(t.options.callback)) t.options.callback.call(t.element);
       });
