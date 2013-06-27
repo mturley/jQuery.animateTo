@@ -79,25 +79,26 @@
     },
 
     animateRelativeToTarget: function() {
-      var element = $(this.element);
+      var t = this;
+      var element = $(t.element);
       // put an invisible placeholder as a sibling to the element, then move the element to where it will be going.
       var sourcePlaceholder = element.clone(true).css('visibility','hidden').insertAfter(element);
-      element[this.options.mode](this.options.target);
+      element[t.options.mode](t.options.target);
       // $(element)[mode](target) works because we've guaranteed that mode will be a valid jQuery function e.g. appendTo.
       var animationStyles = { // animate it into static positioning at the target.
         'top'  : '0px',
         'left' : '0px'
       };
       // if the user gave us some additional styles to animate, let's include them.
-      if(this.options.alsoAnimate != undefined)
-        animationStyles = $.extend( {}, this.options.alsoAnimate, animationStyles);
+      if(t.options.alsoAnimate != undefined)
+        animationStyles = $.extend( {}, t.options.alsoAnimate, animationStyles);
       // apply relative position so it looks like the element is still on top of the source Placeholder.
       element.css({
         'position' : 'relative',
         'top'      : (sourcePlaceholder.offset().top - element.offset().top)+'px',
         'left'     : (sourcePlaceholder.offset().left - element.offset().left)+'px',
         'zIndex'   : 99999
-      }).animate(animationStyles, this.options.duration, this.options.easing, function() {
+      }).animate(animationStyles, t.options.duration, t.options.easing, function() {
         // when the animation is over, remove the relative css and just let it be static.
         element.css({
           'position' : 'static',
@@ -107,29 +108,30 @@
         });
         element.removeData('oldZIndex');
         sourcePlaceholder.remove();
-        if($.isFunction(this.options.callback)) this.options.callback.call(this.element);
+        if($.isFunction(t.options.callback)) t.options.callback.call(t.element);
       });
     },
 
     animateRelativeToSource: function() {
-      var element = $(this.element);
+      var t = this;
+      var element = $(t.element);
       // put an invisible placeholder where the element will end up, and leave the element where it is for now.
-      var targetPlaceholder = element.clone(true).css('visibility','hidden')[this.options.mode](this.options.target);
+      var targetPlaceholder = element.clone(true).css('visibility','hidden')[t.options.mode](t.options.target);
       // $(element)[mode](target) works because we've guaranteed that mode will be a valid jQuery function e.g. appendTo.
       var animationStyles = { // animate it until it looks like it's on top of the target placeholder.
         'top'  : (targetPlaceholder.offset().top - element.offset().top)+'px',
         'left' : (targetPlaceholder.offset().left - element.offset().left)+'px'
       };
       // if the user gave us some additional styles to animate, let's include them.
-      if(this.options.alsoAnimate != undefined)
-        animationStyles = $.extend( {}, this.options.alsoAnimate, animationStyles);
+      if(t.options.alsoAnimate != undefined)
+        animationStyles = $.extend( {}, t.options.alsoAnimate, animationStyles);
       // apply relative position of 0,0 so we can start moving the element towards the target.
       element.css({
         'position' : 'relative',
         'top'      : '0px',
         'left'     : '0px',
         'zIndex'   : 99999
-      }).animate(animationStyles, this.options.duration, this.options.easing, function() {
+      }).animate(animationStyles, t.options.duration, t.options.easing, function() {
         // when the animation is over, actually move the element into place.
         targetPlaceholder.replaceWith(element);
         // then remove the relative css and just let it be static.
@@ -140,30 +142,31 @@
           'zIndex'   : element.data('oldZIndex')
         });
         element.removeData('oldZIndex');
-        if($.isFunction(this.options.callback)) this.options.callback.call(this.element);
+        if($.isFunction(t.options.callback)) t.options.callback.call(t.element);
       });
     },
 
     animateAbsolute: function() {
-      var element = $(this.element);
+      var t = this;
+      var element = $(t.element);
       // put invisible placeholders at BOTH the eource and the target.
       var sourcePlaceholder = element.clone(true).css('visibility','hidden').insertAfter(element);
-      var targetPlaceholder = element.clone(true).css('visibility','hidden')[this.options.mode](this.options.target);
+      var targetPlaceholder = element.clone(true).css('visibility','hidden')[t.options.mode](t.options.target);
       // $(element)[mode](target) works because we've guaranteed that mode will be a valid jQuery function e.g. appendTo.
       var animationStyles = { // animate it to the target placeholder.
         'top'  : (targetPlaceholder.offset().top)+'px',
         'left' : (targetPlaceholder.offset().left)+'px'
       };
       // if the user gave us some additional styles to animate, let's include them.
-      if(this.options.alsoAnimate != undefined)
-        animationStyles = $.extend( {}, this.options.alsoAnimate, animationStyles);
+      if(t.options.alsoAnimate != undefined)
+        animationStyles = $.extend( {}, t.options.alsoAnimate, animationStyles);
       // place the element absolutely on top of the source placeholder.
       element.css({
         'position' : 'absolute',
         'top'      : (sourcePlaceholder.offset().top)+'px',
         'left'     : (sourcePlaceholder.offset().left)+'px',
         'z-index'  : 9999
-      }).animate(animationStyles, this.options.duration, this.options.easing, function() {
+      }).animate(animationStyles, t.options.duration, t.options.easing, function() {
         // when the animation is over, actually move the element into place.
         targetPlaceholder.replaceWith(element);
         element.css({
@@ -174,7 +177,7 @@
         });
         sourcePlaceholder.remove();
         element.removeData('oldZIndex');
-        if($.isFunction(this.options.callback)) this.options.callback.call(this.element);
+        if($.isFunction(t.options.callback)) t.options.callback.call(t.element);
       });
     }
   };
