@@ -107,7 +107,7 @@
         });
         element.removeData('oldZIndex');
         sourcePlaceholder.remove();
-        if($.isFunction(options.callback)) options.callback.call(this.element);
+        if($.isFunction(this.options.callback)) this.options.callback.call(this.element);
       });
     },
 
@@ -140,7 +140,7 @@
           'zIndex'   : element.data('oldZIndex')
         });
         element.removeData('oldZIndex');
-        if($.isFunction(options.callback)) options.callback.call(this.element);
+        if($.isFunction(this.options.callback)) this.options.callback.call(this.element);
       });
     },
 
@@ -174,7 +174,7 @@
         });
         sourcePlaceholder.remove();
         element.removeData('oldZIndex');
-        if($.isFunction(options.callback)) options.callback.call(this.element);
+        if($.isFunction(this.options.callback)) this.options.callback.call(this.element);
       });
     }
   };
