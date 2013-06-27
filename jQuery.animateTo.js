@@ -74,6 +74,7 @@
         }
         return this; // prevent the rest of the plugin from running
       }
+      
       // save our zIndex for later
       $(this.element).data('oldZIndex', $(this.element).css('zIndex'));
       
@@ -102,6 +103,10 @@
       if(this.options.position == 'absolute') this.animateAbsolute();
     },
 
+    // animateRelativeToTarget: during animation, the element is actually at its target with shrinking relative position.
+    // this mode guarantees the end of the animation will be smooth, and if there's any jumpiness it'll happen at the beginning.
+    // this is the default, best used when you want your user focused on the target more than the source (e.g. drag-and-drop).
+    // if the target is in view and the element must glide perfectly to it, use this mode.
     animateRelativeToTarget: function() {
       var t = this;
       var element = $(t.element);
@@ -136,6 +141,10 @@
       });
     },
 
+    // animateRelativeToSource: during animation, the element actually hasn't moved yet, just growing relative position.
+    // this mode guarantees the beginning of the animation will be smooth, and if there's any jumpiness it'll happen at the end.
+    // this mode is best used when you want the user focused on the source over the target (e.g. when removing items from a list)
+    // if the target is just a "bucket of things", and the element will end up out of view, use this mode.
     animateRelativeToSource: function() {
       var t = this;
       var element = $(t.element);
@@ -170,6 +179,9 @@
       });
     },
 
+    // animateAbsolute: during animation, the element is neither at the source nor the target, it's floating in the body.
+    // when you can, use this option: it looks the smoothest, but it doesn't work right with some more dynamic layouts.
+    // also, this mode is the best one to use when the element being animated is not inline (i.e. already absolute or relative).
     animateAbsolute: function() {
       var t = this;
       var element = $(t.element);
