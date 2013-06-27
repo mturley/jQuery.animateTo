@@ -85,7 +85,7 @@
       element[this.options.mode](this.options.target);
       // $(element)[mode](target) works because we've guaranteed that mode will be a valid jQuery function e.g. appendTo.
       var animationStyles = { // animate it into static positioning at the target.
-        'top'  : '0px'
+        'top'  : '0px',
         'left' : '0px'
       };
       // if the user gave us some additional styles to animate, let's include them.
@@ -161,7 +161,7 @@
       element.css({
         'position' : 'absolute',
         'top'      : (sourcePlaceholder.offset().top)+'px',
-        'left'     : (sourcePlaceholder.offset().left)+'px'
+        'left'     : (sourcePlaceholder.offset().left)+'px',
         'z-index'  : 9999
       }).animate(animationStyles, this.options.duration, this.options.easing, function() {
         // when the animation is over, actually move the element into place.
