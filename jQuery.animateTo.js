@@ -79,15 +79,20 @@
       
       // figure out what options we would need to reverse this animation so we can have a reverse function.
       this.options.reversal = {
-        mode   : 'appendTo'
+        mode   : 'appendTo',
         target : $(this.element).parent()
       };
       if($(this.element).next().length !== 0) {
         if($(this.element).prev().length === 0) {
           this.options.reversal = {
-            mode   : 'prependTo'
-            target : $(this.element
-          }
+            mode   : 'prependTo',
+            target : $(this.element).parent()
+          };
+        } else {
+          this.options.reversal = {
+            mode   : 'insertAfter',
+            target : $(this.element).prev()
+          };
         }
       }
 
